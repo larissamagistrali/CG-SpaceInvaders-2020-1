@@ -27,7 +27,6 @@ static struct timeval last_idle_time;
 #include <dirent.h>
 #include <string>
 
-
 //------------------------JOGO---------------------------------
 
 //variaveis
@@ -47,23 +46,54 @@ typedef struct{
     Cor cores[100][100];
 } ModeloDeObjeto;
 
-
-//objetos
-
-
 //naves
+void CarregaNaves(){
 
+}
+void DesenhaNaves(){
+}
 
 //disparador
+void CarregaDisparador(){
 
+}
+void DesenhaDisparador(){}
+
+//projetil
+void DesenhaProjetil(){
+    glPushMatrix();
+        glLoadIdentity();
+        glColor3f(1,0.2,0.2);
+        glTranslatef(10, 10, 0);
+        glBegin(GL_QUADS); //meio = (0,0)
+            glVertex2f(1,0);
+            glVertex2f(0,0);
+            glVertex2f(0,1);
+            glVertex2f(1,1);
+        glEnd();
+    glPopMatrix();
+}
 
 //mostra vidas
 
 
 //chão
+void DesenhaChao(){
+    glPushMatrix();
+        glLoadIdentity();
+        glColor3f(0.7,0,0.3);
+        glTranslatef(1, 1, 0);
+        glBegin(GL_QUADS);
+            glVertex2f(98,0);
+            glVertex2f(0,0);
+            glVertex2f(0,2);
+            glVertex2f(98,2);
+        glEnd();
+    glPopMatrix();
+}
 
 
-//funcoes
+//outras funcoes
 void DesenhaEixos(){
     glColor3f(0, 0, 0);
     glBegin(GL_LINES);
@@ -145,7 +175,7 @@ void init(void){
     r = Image.Load(nome.c_str());
     if (!r) exit(1); // Erro na carga da imagem
     //CarregaCenario();
-    //carrega chao
+
 }
 
 void reshape(int w, int h){
@@ -169,8 +199,9 @@ void display(void){
     Image.SetZoomV(zoomV);
     Image.SetPos(0, 0);
     Image.Display();
-    //Desenha Objetos
-    // ...
+
+    DesenhaChao();
+    DesenhaProjetil();
 
     glutSwapBuffers();
 }
