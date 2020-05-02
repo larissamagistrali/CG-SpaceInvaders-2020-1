@@ -28,13 +28,6 @@ static struct timeval last_idle_time;
 #include <string>
 
 //------------------------JOGO---------------------------------
-
-//variaveis
-int numeroDeVidas=3;
-float PosDisparadorX = 50;
-ImageClass Image;
-
-
 //structs
 typedef struct{
     float r, g, b, alpha; //alpha = transparencia
@@ -46,18 +39,46 @@ typedef struct{
     Cor cores[100][100];
 } ModeloDeObjeto;
 
-//naves
-void CarregaNaves(){
+//variaveis
+int numeroDeVidas=3;
+float PosDisparadorX = 50;
+ImageClass Image;
+ModeloDeObjeto modeloDisparador, modeloNave1, modeloNave2, modeloNave3, modeloNave4;
 
-}
-void DesenhaNaves(){
+//objetos
+void LeArquivoModelo(ModeloDeObjeto &modelo, char *path){
+    std::ifstream infile(path);
+    int numeroDeCores, indiceCor = 0;
+    infile >> numeroDeCores;
+    Cor ListaCores[numeroDeCores] = {};
+    while (indiceCor < numeroDeCores){
+        Cor c;
+        infile >> indiceCor >> c.r >> c.g >> c.b >> c.alpha;
+        ListaCores[indiceCor - 1] = c;
+    }
+    int largura, altura,i, j, cor = 0;
+    infile >> largura >> altura;
+    modelo.altura = altura;
+    modelo.largura = largura;
+    Cor Matriz[altura][largura] = {};
+    for (i = 0; i < altura; i++) {
+        for (j = 0; j < largura; j++){
+            infile >> cor;
+            Matriz[i][j] = ListaCores[cor - 1];
+        }
+    }
+    for (i = 0; i < altura; i++){
+        for (j = 0; j < largura; j++) {
+            modelo.cores[i][j] = Matriz[i][j];
+        }
+    }
+    infile.close();
 }
 
-//disparador
-void CarregaDisparador(){
+void DesenhaNaves(){}
 
-}
 void DesenhaDisparador(){}
+
 
 //projetil
 void DesenhaProjetil(){
@@ -104,50 +125,15 @@ void DesenhaEixos(){
     glEnd();
 }
 
-void LeArquivoModelo(ModeloDeObjeto &mod, const char *path){
-    std::ifstream infile(path);
-    int numeroDeCores, indiceCor = 0;
-    infile >> numeroDeCores;
-    //cout << "Numero de Cores = " << numeroDeCores << endl;
-    Cor ListaCores[numeroDeCores] = {};
-    while (indiceCor < numeroDeCores){
-        Cor c;
-        infile >> indiceCor >> c.r >> c.g >> c.b >> c.alpha;
-        //cout << "Cor " << indiceCor << " " << c.r << " " << c.g << " " << c.b << " " << c.alpha << endl;
-        ListaCores[indiceCor - 1] = c;
-    }
-    int largura, altura,i, j, cor = 0;
-    infile >> largura >> altura;
-    mod.altura = altura;
-    mod.largura = largura;
-    Cor Matriz[altura][largura] = {}; //matriz com as cores do modelo
-    //cout << "Largura = " << largura << " Altura = " << altura << endl;
-    for (i = 0; i < altura; i++) {
-        for (j = 0; j < largura; j++){
-            infile >> cor;
-            //cout << "Matriz[" << i << "][" << j << "] = Cor " << cor << endl;
-            Matriz[i][j] = ListaCores[cor - 1];
-        }
-    }
-    for (i = 0; i < altura; i++){
-        for (j = 0; j < largura; j++) {
-            mod.cores[i][j] = Matriz[i][j];
-        }
-    }
-    infile.close();
-}
-
 
 //comandos
 void arrow_keys(int a_keys, int x, int y){
     switch (a_keys){
     case GLUT_KEY_RIGHT:
-        //if (!Colide(PosRobotX, 3, 1, 0, -1))
-            PosDisparadorX++;
+        PosDisparadorX++;
         break;
     case GLUT_KEY_LEFT:
-        //if (!Colide(PosRobotX, 3, -1, 0, -1))
-            PosDisparadorX--;
+        PosDisparadorX--;
         break;
     default:
         break;
@@ -171,11 +157,16 @@ void keyboard(unsigned char key, int x, int y){
 void init(void){
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //cor de fundo
     int r;
-    string nome = "cenario.png";
+    string nome = "./JogoImagens/cenario.png";
     r = Image.Load(nome.c_str());
     if (!r) exit(1); // Erro na carga da imagem
-    //CarregaCenario();
 
+    //carrega modelos
+    LeArquivoModelo(modeloDisparador,"./JogoArquivos/Disparador.txt");
+    LeArquivoModelo(modeloNave1,"./JogoArquivos/NaveAzul.txt");
+    LeArquivoModelo(modeloNave2,"./JogoArquivos/NaveRosa.txt");
+    LeArquivoModelo(modeloNave3,"./JogoArquivos/NaveRoxa.txt");
+    LeArquivoModelo(modeloNave4,"./JogoArquivos/NaveVermelha.txt");
 }
 
 void reshape(int w, int h){
@@ -201,7 +192,7 @@ void display(void){
     Image.Display();
 
     DesenhaChao();
-    DesenhaProjetil();
+    DesenhaProjetil(); //test
 
     glutSwapBuffers();
 }
