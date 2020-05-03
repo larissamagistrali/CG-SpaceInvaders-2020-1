@@ -600,7 +600,7 @@
 
 1588342328 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\soil.h
 
-1588464694 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\programabasicoopengl.cpp
+1588476527 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\programabasicoopengl.cpp
 	<iostream>
 	<cmath>
 	<cstdlib>
@@ -615,6 +615,7 @@
 	<fstream>
 	<dirent.h>
 	<string>
+	<time.h>
 
 1588342329 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_dxt.cpp
 	"image_DXT.h"

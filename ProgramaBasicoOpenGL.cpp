@@ -26,6 +26,7 @@ static struct timeval last_idle_time;
 #include <fstream>
 #include <dirent.h>
 #include <string>
+#include <time.h>
 
 //------------------------JOGO---------------------------------
 //structs
@@ -52,9 +53,10 @@ int numeroDeVidas=3;
 ImageClass Image;
 ModeloDeObjeto modeloProjetil, modeloDisparador, modeloNaveAzul, modeloNaveRoxa, modeloNaveVermelha, modeloNaveRosa;
 Instancia instanciaDisparador, instanciaNave1,instanciaNave2,instanciaNave3,instanciaNave4,instanciaNave5,instanciaNave6,instanciaNave7,instanciaNave8;
-Instancia naves[8];
+Instancia Naves[8];
 Instancia Disparos[100];
 int contDisparos=0;
+
 
 //objetos
 void LeArquivoModelo(ModeloDeObjeto &modelo, char *path){
@@ -119,6 +121,37 @@ void DesenhaIntanciaDeModelo(Instancia &inst){
     glPopMatrix();
 }
 
+void CarregaModelos(){
+    LeArquivoModelo(modeloDisparador,"./JogoArquivos/Disparador.txt");
+    LeArquivoModelo(modeloProjetil,"./JogoArquivos/Projetil.txt");
+    LeArquivoModelo(modeloNaveAzul,"./JogoArquivos/NaveAzul.txt");
+    LeArquivoModelo(modeloNaveRosa,"./JogoArquivos/NaveRosa.txt");
+    LeArquivoModelo(modeloNaveRoxa,"./JogoArquivos/NaveRoxa.txt");
+    LeArquivoModelo(modeloNaveVermelha,"./JogoArquivos/NaveVermelha.txt");
+}
+
+void CriaInstanciasDeNaves(){ //precisa fazer envelopes para cada nave
+    srand(time(NULL));
+    CriaInstancia(instanciaNave1,modeloNaveAzul,rand() % 145,80,0.01);
+    CriaInstancia(instanciaNave2,modeloNaveAzul,rand() % 145,80,0.015);
+    CriaInstancia(instanciaNave3,modeloNaveVermelha,rand() % 145,80,0.02);
+    CriaInstancia(instanciaNave4,modeloNaveVermelha,rand() % 145,80,0.025);
+    CriaInstancia(instanciaNave5,modeloNaveRoxa,rand() % 145,80,0.03);
+    CriaInstancia(instanciaNave6,modeloNaveRoxa,rand() % 145,80,0.035);
+    CriaInstancia(instanciaNave7,modeloNaveRosa,rand() % 145,80,0.04);
+    CriaInstancia(instanciaNave8,modeloNaveRosa,rand() % 145,80,0.045);
+    Naves[0]=instanciaNave1;
+    Naves[1]=instanciaNave2;
+    Naves[2]=instanciaNave3;
+    Naves[3]=instanciaNave4;
+    Naves[4]=instanciaNave5;
+    Naves[5]=instanciaNave6;
+    Naves[6]=instanciaNave7;
+    Naves[7]=instanciaNave8;
+}
+
+
+//disparos
 void Dispara(){
     printf("Dispara() \n");
     Instancia i;
@@ -126,6 +159,9 @@ void Dispara(){
     Disparos[contDisparos]=i;
     contDisparos++;
 }
+
+
+//colisao
 
 
 //mostra vidas
@@ -147,32 +183,20 @@ void DesenhaChao(){
 }
 
 
-//outras funcoes
-void DesenhaEixos(){
-    glColor3f(0, 0, 0);
-    glBegin(GL_LINES);
-    glVertex2d(0, 25);
-    glVertex2d(100, 25);
-    glVertex2d(50, 0);
-    glVertex2d(50, 50);
-    glEnd();
-}
-
-
 //comandos
 void arrow_keys(int a_keys, int x, int y){
     switch (a_keys){
     case GLUT_KEY_RIGHT:
         if(instanciaDisparador.x==148){}
         else{
-            instanciaDisparador.x=instanciaDisparador.x+1;
+            instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc;
             glutPostRedisplay();
         }
         break;
     case GLUT_KEY_LEFT:
         if(instanciaDisparador.x==4){}
         else{
-            instanciaDisparador.x=instanciaDisparador.x-1;
+            instanciaDisparador.x=instanciaDisparador.x-instanciaDisparador.veloc;
             glutPostRedisplay();
         }
         break;
@@ -189,7 +213,6 @@ void keyboard(unsigned char key, int x, int y){
     case ' ':
         Dispara();
         glutPostRedisplay();
-        printf("barra de espaco = atirar \n"); //teste
     default:
         break;
     }
@@ -204,21 +227,12 @@ void init(void){
     r = Image.Load(nome.c_str());
     if (!r) exit(1); // Erro na carga da imagem
 
-    //carrega modelos
-    LeArquivoModelo(modeloDisparador,"./JogoArquivos/Disparador.txt");
-    LeArquivoModelo(modeloProjetil,"./JogoArquivos/Projetil.txt");
-    LeArquivoModelo(modeloNaveAzul,"./JogoArquivos/NaveAzul.txt");
-    LeArquivoModelo(modeloNaveRosa,"./JogoArquivos/NaveRosa.txt");
-    LeArquivoModelo(modeloNaveRoxa,"./JogoArquivos/NaveRoxa.txt");
-    LeArquivoModelo(modeloNaveVermelha,"./JogoArquivos/NaveVermelha.txt");
+    //modelos
+    CarregaModelos();
 
-    //cria instancias
-    CriaInstancia(instanciaDisparador, modeloDisparador,75,1.8,1);
-    CriaInstancia(instanciaNave1,modeloNaveAzul,5,30,1);  //criar 8 naves
-    CriaInstancia(instanciaNave2,modeloNaveRosa,15,30,1); //definir velocidades e localizacao aleatorias
-    CriaInstancia(instanciaNave3,modeloNaveVermelha,25,30,1);
-    CriaInstancia(instanciaNave4,modeloNaveRoxa,35,30,1);
-
+    //instancias
+    CriaInstancia(instanciaDisparador, modeloDisparador,75,1.8,2.5);
+    CriaInstanciasDeNaves();
 }
 
 void reshape(int w, int h){
@@ -242,15 +256,28 @@ void display(void){
     Image.SetZoomV(zoomV);
     Image.SetPos(0, 0);
     Image.Display();
+    srand(time(NULL));
 
+
+    //atualiza chao
     DesenhaChao();
+    //atualiza disparador
     DesenhaIntanciaDeModelo(instanciaDisparador);
-    DesenhaIntanciaDeModelo(instanciaNave1);
-    DesenhaIntanciaDeModelo(instanciaNave2);
-    DesenhaIntanciaDeModelo(instanciaNave3);
-    DesenhaIntanciaDeModelo(instanciaNave4);
-
+    //atualiza naves
     int i;
+    for(i=0;i<8;i++){
+        DesenhaIntanciaDeModelo(Naves[i]);
+        if(Naves[i].y<=-10){
+            Naves[i].y=80;
+            Naves[i].x=rand() % 145;
+            glutPostRedisplay();
+        }else{
+            Naves[i].y=Naves[i].y-Naves[i].veloc;
+            glutPostRedisplay();
+        }
+
+    }
+    //atualiza disparos
     for(i=0;i<contDisparos;i++){
         DesenhaIntanciaDeModelo(Disparos[i]);
         if(Disparos[i].y==80){}
@@ -268,7 +295,7 @@ int main(int argc, char **argv){
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB);
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(800, 450);
-    glutCreateWindow("SpaceInvaders-Larissa-Nikolas");
+    glutCreateWindow("SpaceInvaders");
     init();
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
@@ -277,3 +304,5 @@ int main(int argc, char **argv){
     glutMainLoop();
     return 0;
 }
+
+
