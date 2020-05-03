@@ -50,10 +50,11 @@ typedef struct{
 //variaveis
 int numeroDeVidas=3;
 ImageClass Image;
-ModeloDeObjeto modeloDisparador, modeloNaveAzul, modeloNaveRoxa, modeloNaveVermelha, modeloNaveRosa;
+ModeloDeObjeto modeloProjetil, modeloDisparador, modeloNaveAzul, modeloNaveRoxa, modeloNaveVermelha, modeloNaveRosa;
 Instancia instanciaDisparador, instanciaNave1,instanciaNave2,instanciaNave3,instanciaNave4,instanciaNave5,instanciaNave6,instanciaNave7,instanciaNave8;
-//Instancia naves[8];
-
+Instancia naves[8];
+Instancia Disparos[100];
+int contDisparos=0;
 
 //objetos
 void LeArquivoModelo(ModeloDeObjeto &modelo, char *path){
@@ -87,7 +88,7 @@ void LeArquivoModelo(ModeloDeObjeto &modelo, char *path){
 }
 
 void CriaInstancia(Instancia &i, ModeloDeObjeto &m, float x1, float y1, float v){
-    printf("CriaInstancia() \n");
+    //printf("CriaInstancia() \n");
     i.modelo=m;
     i.x=x1;
     i.y=y1;
@@ -99,7 +100,7 @@ void DesenhaIntanciaDeModelo(Instancia &inst){
     glPushMatrix();
         glLoadIdentity();
         glTranslatef(inst.x, inst.y, 0);
-        float dx = -inst.modelo.largura / 4., dy = inst.modelo.altura / 2. - 0.4;
+        float dx = -inst.modelo.largura / 4., dy = inst.modelo.altura / 2. - 0.4; //nao entendi pq isso
         int i, j;
         for (i = 0; i < inst.modelo.largura; i++) {
             for (j = 0; j < inst.modelo.altura; j++){
@@ -118,23 +119,13 @@ void DesenhaIntanciaDeModelo(Instancia &inst){
     glPopMatrix();
 }
 
-
-//projetil
-void DesenhaProjetil(){
-    glPushMatrix();
-        glLoadIdentity();
-        glColor3f(1,0.2,0.2);
-        glTranslatef(10, 10, 0);
-        glBegin(GL_QUADS); //meio = (0,0)
-            glVertex2f(1,0);
-            glVertex2f(0,0);
-            glVertex2f(0,1);
-            glVertex2f(1,1);
-        glEnd();
-    glPopMatrix();
+void Dispara(){
+    printf("Dispara() \n");
+    Instancia i;
+    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y+7,0.1); //x,y,veloc aleatorios
+    Disparos[contDisparos]=i;
+    contDisparos++;
 }
-
-void Atira(){}
 
 
 //mostra vidas
@@ -145,12 +136,12 @@ void DesenhaChao(){
     glPushMatrix();
         glLoadIdentity();
         glColor3f(0.7,0,0.3);
-        glTranslatef(1, 1, 0);
+        glTranslatef(0, 1, 0);
         glBegin(GL_QUADS);
-            glVertex2f(148,0);
+            glVertex2f(150,0);
             glVertex2f(0,0);
             glVertex2f(0,2);
-            glVertex2f(148,2);
+            glVertex2f(150,2);
         glEnd();
     glPopMatrix();
 }
@@ -172,14 +163,14 @@ void DesenhaEixos(){
 void arrow_keys(int a_keys, int x, int y){
     switch (a_keys){
     case GLUT_KEY_RIGHT:
-        if(instanciaDisparador.x==98){}
+        if(instanciaDisparador.x==148){}
         else{
             instanciaDisparador.x=instanciaDisparador.x+1;
             glutPostRedisplay();
         }
         break;
     case GLUT_KEY_LEFT:
-        if(instanciaDisparador.x==5){}
+        if(instanciaDisparador.x==4){}
         else{
             instanciaDisparador.x=instanciaDisparador.x-1;
             glutPostRedisplay();
@@ -196,6 +187,8 @@ void keyboard(unsigned char key, int x, int y){
         exit(0); // a tecla ESC for pressionada
         break;
     case ' ':
+        Dispara();
+        glutPostRedisplay();
         printf("barra de espaco = atirar \n"); //teste
     default:
         break;
@@ -213,6 +206,7 @@ void init(void){
 
     //carrega modelos
     LeArquivoModelo(modeloDisparador,"./JogoArquivos/Disparador.txt");
+    LeArquivoModelo(modeloProjetil,"./JogoArquivos/Projetil.txt");
     LeArquivoModelo(modeloNaveAzul,"./JogoArquivos/NaveAzul.txt");
     LeArquivoModelo(modeloNaveRosa,"./JogoArquivos/NaveRosa.txt");
     LeArquivoModelo(modeloNaveRoxa,"./JogoArquivos/NaveRoxa.txt");
@@ -220,9 +214,8 @@ void init(void){
 
     //cria instancias
     CriaInstancia(instanciaDisparador, modeloDisparador,75,1.8,1);
-
-    CriaInstancia(instanciaNave1,modeloNaveAzul,5,30,1);
-    CriaInstancia(instanciaNave2,modeloNaveRosa,15,30,1);
+    CriaInstancia(instanciaNave1,modeloNaveAzul,5,30,1);  //criar 8 naves
+    CriaInstancia(instanciaNave2,modeloNaveRosa,15,30,1); //definir velocidades e localizacao aleatorias
     CriaInstancia(instanciaNave3,modeloNaveVermelha,25,30,1);
     CriaInstancia(instanciaNave4,modeloNaveRoxa,35,30,1);
 
@@ -251,12 +244,21 @@ void display(void){
     Image.Display();
 
     DesenhaChao();
-    DesenhaProjetil(); //teste
     DesenhaIntanciaDeModelo(instanciaDisparador);
     DesenhaIntanciaDeModelo(instanciaNave1);
     DesenhaIntanciaDeModelo(instanciaNave2);
     DesenhaIntanciaDeModelo(instanciaNave3);
     DesenhaIntanciaDeModelo(instanciaNave4);
+
+    int i;
+    for(i=0;i<contDisparos;i++){
+        DesenhaIntanciaDeModelo(Disparos[i]);
+        if(Disparos[i].y==80){}
+        else{
+            Disparos[i].y=Disparos[i].y+Disparos[i].veloc;
+            glutPostRedisplay();
+        }
+    }
 
     glutSwapBuffers();
 }
