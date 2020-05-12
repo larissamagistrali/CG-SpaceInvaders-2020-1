@@ -248,6 +248,7 @@ bool VerificaColisaoNaveDisparador(Instancia &nave, Instancia &disparador){
     return false;
 }
 
+
 //chão
 void DesenhaChao(){
     glPushMatrix();
@@ -270,7 +271,7 @@ void arrow_keys(int a_keys, int x, int y){
     case GLUT_KEY_RIGHT:
         if(instanciaDisparador.x==glOrthoX-5){}
         else{
-            instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc; //arrumar pra segundos
+            instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc;
             glutPostRedisplay();
         }
         break;
