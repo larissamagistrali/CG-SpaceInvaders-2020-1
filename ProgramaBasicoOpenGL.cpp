@@ -27,19 +27,31 @@ static struct timeval last_idle_time;
 #include <dirent.h>
 #include <string>
 #include <time.h>
-
+#include <vector>
 //------------------------JOGO---------------------------------
-//structs
+
+//Definicao das structs
+
+//Ponto
+typedef struct{
+    int x;
+    int y;
+} Ponto;
+
+//Cor
 typedef struct{
     float r, g, b;
 } Cor;
 
+//Modelo de Objeto
 typedef struct{
     int altura;
     int largura;
     Cor cores[100][100];
 } ModeloDeObjeto;
 
+
+//Instancia de um objeto
 typedef struct{
     ModeloDeObjeto modelo;
     float x; //x,y posicao do objeto no universo
@@ -47,15 +59,20 @@ typedef struct{
     float veloc;
 } Instancia;
 
-
-//variaveis
+//Variaveis
 int numeroDeVidas=3;
+ImageClass numVidas;
+
 ImageClass Image;
+
 ModeloDeObjeto modeloProjetil, modeloDisparador, modeloNaveAzul, modeloNaveRoxa, modeloNaveVermelha, modeloNaveRosa;
+
 Instancia instanciaDisparador, instanciaNave1,instanciaNave2,instanciaNave3,instanciaNave4,instanciaNave5,instanciaNave6,instanciaNave7,instanciaNave8;
-Instancia Naves[8];
-Instancia Disparos[100];
-int contDisparos=0;
+//Instancia Naves[8];
+vector <Instancia> Naves;
+vector <Instancia> Disparos;
+//Instancia Disparos[100];
+//int contDisparos=0;
 
 
 //objetos
@@ -140,14 +157,23 @@ void CriaInstanciasDeNaves(){ //precisa fazer envelopes para cada nave
     CriaInstancia(instanciaNave6,modeloNaveRoxa,rand() % 145,80,0.035);
     CriaInstancia(instanciaNave7,modeloNaveRosa,rand() % 145,80,0.04);
     CriaInstancia(instanciaNave8,modeloNaveRosa,rand() % 145,80,0.045);
-    Naves[0]=instanciaNave1;
-    Naves[1]=instanciaNave2;
-    Naves[2]=instanciaNave3;
-    Naves[3]=instanciaNave4;
-    Naves[4]=instanciaNave5;
-    Naves[5]=instanciaNave6;
-    Naves[6]=instanciaNave7;
-    Naves[7]=instanciaNave8;
+    //Naves[0]=instanciaNave1;
+    //Naves[1]=instanciaNave2;
+    //Naves[2]=instanciaNave3;
+    //Naves[3]=instanciaNave4;
+    //Naves[4]=instanciaNave5;
+    //Naves[5]=instanciaNave6;
+    //Naves[6]=instanciaNave7;
+    //Naves[7]=instanciaNave8;
+
+    Naves.push_back(instanciaNave1);
+    Naves.push_back(instanciaNave2);
+    Naves.push_back(instanciaNave3);
+    Naves.push_back(instanciaNave4);
+    Naves.push_back(instanciaNave5);
+    Naves.push_back(instanciaNave6);
+    Naves.push_back(instanciaNave7);
+    Naves.push_back(instanciaNave8);
 }
 
 
@@ -155,17 +181,23 @@ void CriaInstanciasDeNaves(){ //precisa fazer envelopes para cada nave
 void Dispara(){
     printf("Dispara() \n");
     Instancia i;
-    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y+7,0.1); //x,y,veloc aleatorios
-    Disparos[contDisparos]=i;
-    contDisparos++;
+    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y+7, 0.3); //x,y,veloc aleatorios
+    //Disparos[contDisparos]=i;
+    //contDisparos++;
+    Disparos.push_back(i);
 }
 
 
 //colisao
-
-
-//mostra vidas
-
+bool VerificaColisao(Instancia &inst1, Instancia &inst2){
+    if (inst2.x <= inst1.x + inst1.modelo.largura &&
+        inst2.x + inst2.modelo.largura > inst1.x &&
+        inst2.y <= inst1.y + inst1.modelo.altura &&
+        inst2.y + inst2.modelo.altura >= inst1.y) {
+            return true;
+    }
+    return false;
+}
 
 //chão
 void DesenhaChao(){
@@ -225,7 +257,13 @@ void init(void){
     int r;
     string nome = "./JogoImagens/cenario.png";
     r = Image.Load(nome.c_str());
+
+    int v;
+    string vidas = "./JogoImagens/vida3.png";
+    v = numVidas.Load(vidas.c_str());
+
     if (!r) exit(1); // Erro na carga da imagem
+    if (!v) exit(1); // Erro na carga da imagem
 
     //modelos
     CarregaModelos();
@@ -250,43 +288,85 @@ void display(void){
     glOrtho(0, 150, 0, 75, -1, 1);// Define os limites logicos da area OpenGL dentro da Janela
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
     float zoomH = (glutGet(GLUT_WINDOW_WIDTH))/(double)Image.SizeX();
     float zoomV = (glutGet(GLUT_WINDOW_HEIGHT))/(double)Image.SizeY();
     Image.SetZoomH(zoomH);
     Image.SetZoomV(zoomV);
     Image.SetPos(0, 0);
     Image.Display();
-    srand(time(NULL));
 
+    if(Naves.size() != 0 && numeroDeVidas > 0){
+
+    //numVidas.SetSize(100, 50);
+    numVidas.SetPos(110, 65);
+    numVidas.Display();
+
+    if(numeroDeVidas == 2){
+        int v;
+        string vida = "./JogoImagens/vida2.png";
+        v = numVidas.Load(vida.c_str());
+    }else if(numeroDeVidas == 1){
+        int v;
+        string vida = "./JogoImagens/vida1.png";
+        v = numVidas.Load(vida.c_str());
+    }
+
+    srand(time(NULL));
 
     //atualiza chao
     DesenhaChao();
     //atualiza disparador
     DesenhaIntanciaDeModelo(instanciaDisparador);
-    //atualiza naves
-    int i;
-    for(i=0;i<8;i++){
-        DesenhaIntanciaDeModelo(Naves[i]);
-        if(Naves[i].y<=-10){
-            Naves[i].y=80;
-            Naves[i].x=rand() % 145;
-            glutPostRedisplay();
+        //Atualiza Naves
+        int i;
+        for(i=0;i<Naves.size();i++){
+            DesenhaIntanciaDeModelo(Naves[i]);
+            if(Naves[i].y <= -10){
+                Naves[i].y = 80;
+                Naves[i].x = rand() % 145;
+                glutPostRedisplay();
+            }else{
+                if(VerificaColisao(Naves[i], instanciaDisparador)){ //Verifica se o tiro pegou em alguma das naves restantes
+                    Naves.erase(Naves.begin() + i);
+                    numeroDeVidas = numeroDeVidas - 1;
+                }else{
+                    Naves[i].y = Naves[i].y - Naves[i].veloc;
+                }
+                glutPostRedisplay();
+            }
+        }
+
+        //atualiza disparos
+        for(i=0;i<Disparos.size();i++){
+            DesenhaIntanciaDeModelo(Disparos[i]);
+            if(Disparos[i].y==80){}
+            else{
+                for(int j = 0; j < Naves.size(); j++){
+                    if(VerificaColisao(Disparos[i], Naves[j])){ //Verifica se o tiro pegou em alguma das naves restantes
+                        printf("COLIDIU NAVE (%d, %d) TIRO (%d, %d)", Naves[j].modelo.altura, Naves[j].modelo.largura, Disparos[i].modelo.altura, Disparos[i].modelo.largura);
+                        Naves.erase(Naves.begin() + j); // elimina a nave
+                        Disparos.erase(Disparos.begin() + i); // elimina o tiro
+                    }
+                }
+                Disparos[i].y = Disparos[i].y + Disparos[i].veloc;
+                glutPostRedisplay();
+            }
+        }
+    }else{
+        int r;
+        string imagemFinal;
+        if(numeroDeVidas > 0){
+        imagemFinal = "./JogoImagens/voce-venceu.png";
+        r = Image.Load(imagemFinal.c_str());
+        Image.Display();
         }else{
-            Naves[i].y=Naves[i].y-Naves[i].veloc;
-            glutPostRedisplay();
+            imagemFinal = "./JogoImagens/fim-de-jogo.png";
+            r = Image.Load(imagemFinal.c_str());
+            Image.Display();
         }
 
     }
-    //atualiza disparos
-    for(i=0;i<contDisparos;i++){
-        DesenhaIntanciaDeModelo(Disparos[i]);
-        if(Disparos[i].y==80){}
-        else{
-            Disparos[i].y=Disparos[i].y+Disparos[i].veloc;
-            glutPostRedisplay();
-        }
-    }
-
     glutSwapBuffers();
 }
 
