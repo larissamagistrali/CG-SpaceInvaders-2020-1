@@ -62,6 +62,8 @@ typedef struct{
 } Instancia;
 
 //Variaveis
+int glOrthoX=450, glOrthoY=225;
+
 int numeroDeVidas=3;
 ImageClass numVidas;
 
@@ -70,18 +72,16 @@ ImageClass Image;
 ModeloDeObjeto modeloProjetil, modeloDisparador, modeloNaveAzul, modeloNaveRoxa, modeloNaveVermelha, modeloNaveRosa;
 
 Instancia instanciaDisparador, instanciaNave1,instanciaNave2,instanciaNave3,instanciaNave4,instanciaNave5,instanciaNave6,instanciaNave7,instanciaNave8;
-//Instancia Naves[8];
 vector <Instancia> Naves;
 vector <Instancia> Disparos;
-//Instancia Disparos[100];
-//int contDisparos=0;
+
+//ponto central
 void calculaPontoCentral(Instancia inst){
     float xC = inst.x - (inst.modelo.largura / 2);
     float yC = inst.y + (inst.modelo.altura / 2);
     inst.xCentral = xC;
     inst.yCentral = yC;
     printf("XC %f YC %f\n", xC, yC);
-
 }
 
 //objetos
@@ -130,21 +130,24 @@ void DesenhaIntanciaDeModelo(Instancia &inst){
     glPushMatrix();
         glLoadIdentity();
         glTranslatef(inst.x, inst.y, 0);
-        float dx = -inst.modelo.largura / 4., dy = inst.modelo.altura / 2. - 0.4; //nao entendi pq isso
+        float dx =inst.modelo.largura, dy = inst.modelo.altura;
         int i, j;
         for (i = 0; i < inst.modelo.largura; i++) {
             for (j = 0; j < inst.modelo.altura; j++){
-                glBegin(GL_QUADS);
-                glColor3ub(inst.modelo.cores[i][j].r, inst.modelo.cores[i][j].g, inst.modelo.cores[i][j].b);
-                glVertex2f(dx, dy);
-                glVertex2f(dx + 0.4 ,dy);
-                glVertex2f(dx + 0.4, dy + 0.4);
-                glVertex2f(dx, dy + 0.4);
-                glEnd();
-                dx += 0.4;
+                if(inst.modelo.cores[i][j].r==0 && inst.modelo.cores[i][j].g==0 && inst.modelo.cores[i][j].b==0){}
+                else{
+                    glBegin(GL_QUADS);
+                    glColor3ub(inst.modelo.cores[i][j].r, inst.modelo.cores[i][j].g, inst.modelo.cores[i][j].b);
+                    glVertex2f(dx, dy);
+                    glVertex2f(dx + 1 ,dy);
+                    glVertex2f(dx + 1, dy + 1);
+                    glVertex2f(dx, dy + 1);
+                    glEnd();
+                }
+                dx=dx+1;
             }
-            dy -= 0.4;
-            dx = -inst.modelo.largura / 4.;
+            dy=dy-1;
+            dx=inst.modelo.largura;
         }
     glPopMatrix();
 }
@@ -158,24 +161,16 @@ void CarregaModelos(){
     LeArquivoModelo(modeloNaveVermelha,"./JogoArquivos/NaveVermelha.txt");
 }
 
-void CriaInstanciasDeNaves(){ //precisa fazer envelopes para cada nave
+void CriaInstanciasDeNaves(){
     srand(time(NULL));
-    CriaInstancia(instanciaNave1,modeloNaveAzul,rand() % 145,80,0.01);
-    CriaInstancia(instanciaNave2,modeloNaveAzul,rand() % 145,80,0.015);
-    CriaInstancia(instanciaNave3,modeloNaveVermelha,rand() % 145,80,0.02);
-    CriaInstancia(instanciaNave4,modeloNaveVermelha,rand() % 145,80,0.025);
-    CriaInstancia(instanciaNave5,modeloNaveRoxa,rand() % 145,80,0.03);
-    CriaInstancia(instanciaNave6,modeloNaveRoxa,rand() % 145,80,0.035);
-    CriaInstancia(instanciaNave7,modeloNaveRosa,rand() % 145,80,0.04);
-    CriaInstancia(instanciaNave8,modeloNaveRosa,rand() % 145,80,0.045);
-    //Naves[0]=instanciaNave1;
-    //Naves[1]=instanciaNave2;
-    //Naves[2]=instanciaNave3;
-    //Naves[3]=instanciaNave4;
-    //Naves[4]=instanciaNave5;
-    //Naves[5]=instanciaNave6;
-    //Naves[6]=instanciaNave7;
-    //Naves[7]=instanciaNave8;
+    CriaInstancia(instanciaNave1,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0.01);
+    CriaInstancia(instanciaNave2,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0.015);
+    CriaInstancia(instanciaNave3,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0.02);
+    CriaInstancia(instanciaNave4,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0.025);
+    CriaInstancia(instanciaNave5,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0.03);
+    CriaInstancia(instanciaNave6,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0.035);
+    CriaInstancia(instanciaNave7,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0.04);
+    CriaInstancia(instanciaNave8,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0.045);
 
     Naves.push_back(instanciaNave1);
     Naves.push_back(instanciaNave2);
@@ -192,9 +187,7 @@ void CriaInstanciasDeNaves(){ //precisa fazer envelopes para cada nave
 void Dispara(){
     printf("Dispara() \n");
     Instancia i;
-    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y+7, 0.3); //x,y,veloc aleatorios
-    //Disparos[contDisparos]=i;
-    //contDisparos++;
+    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y+7, 0.3);
     Disparos.push_back(i);
 }
 
@@ -222,10 +215,10 @@ void DesenhaChao(){
         glColor3f(0.7,0,0.3);
         glTranslatef(0, 1, 0);
         glBegin(GL_QUADS);
-            glVertex2f(150,0);
+            glVertex2f(glOrthoX,0);
             glVertex2f(0,0);
             glVertex2f(0,2);
-            glVertex2f(150,2);
+            glVertex2f(glOrthoX,2);
         glEnd();
     glPopMatrix();
 }
@@ -235,14 +228,14 @@ void DesenhaChao(){
 void arrow_keys(int a_keys, int x, int y){
     switch (a_keys){
     case GLUT_KEY_RIGHT:
-        if(instanciaDisparador.x==148){}
+        if(instanciaDisparador.x==glOrthoX-10){}
         else{
-            instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc;
+            instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc; //arrumar pra segundos
             glutPostRedisplay();
         }
         break;
     case GLUT_KEY_LEFT:
-        if(instanciaDisparador.x==4){}
+        if(instanciaDisparador.x==20){}
         else{
             instanciaDisparador.x=instanciaDisparador.x-instanciaDisparador.veloc;
             glutPostRedisplay();
@@ -285,7 +278,7 @@ void init(void){
     CarregaModelos();
 
     //instancias
-    CriaInstancia(instanciaDisparador, modeloDisparador,75,1.8,2.5);
+    CriaInstancia(instanciaDisparador, modeloDisparador,glOrthoX/2,3,2.5);
     CriaInstanciasDeNaves();
 }
 
@@ -301,7 +294,7 @@ void display(void){
     glClear(GL_COLOR_BUFFER_BIT); // Limpa a tela coma cor de fundo
     glMatrixMode(GL_PROJECTION);// Define os limites logicos da area OpenGL dentro da Janela
     glLoadIdentity();
-    glOrtho(0, 150, 0, 75, -1, 1);// Define os limites logicos da area OpenGL dentro da Janela
+    glOrtho(0, glOrthoX, 0, glOrthoY, -1, 1);// Define os limites logicos da area OpenGL dentro da Janela
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -313,34 +306,32 @@ void display(void){
     Image.Display();
 
     if(Naves.size() != 0 && numeroDeVidas > 0){
+        numVidas.SetPos(glOrthoX-70, glOrthoY-20);
+        numVidas.Display();
 
-    //numVidas.SetSize(100, 50);
-    numVidas.SetPos(110, 65);
-    numVidas.Display();
+        if(numeroDeVidas == 2){
+            int v;
+            string vida = "./JogoImagens/vida2.png";
+            v = numVidas.Load(vida.c_str());
+        }else if(numeroDeVidas == 1){
+            int v;
+            string vida = "./JogoImagens/vida1.png";
+            v = numVidas.Load(vida.c_str());
+        }
 
-    if(numeroDeVidas == 2){
-        int v;
-        string vida = "./JogoImagens/vida2.png";
-        v = numVidas.Load(vida.c_str());
-    }else if(numeroDeVidas == 1){
-        int v;
-        string vida = "./JogoImagens/vida1.png";
-        v = numVidas.Load(vida.c_str());
-    }
+        srand(time(NULL));
 
-    srand(time(NULL));
-
-    //atualiza chao
-    DesenhaChao();
-    //atualiza disparador
-    DesenhaIntanciaDeModelo(instanciaDisparador);
+        //atualiza chao
+        DesenhaChao();
+        //atualiza disparador
+        DesenhaIntanciaDeModelo(instanciaDisparador);
         //Atualiza Naves
         int i;
         for(i=0;i<Naves.size();i++){
             DesenhaIntanciaDeModelo(Naves[i]);
             if(Naves[i].y <= -10){
-                Naves[i].y = 80;
-                Naves[i].x = rand() % 145;
+                Naves[i].y = glOrthoY+10;
+                Naves[i].x = rand() % glOrthoX-5;
                 glutPostRedisplay();
             }else{
                 if(VerificaColisao(Naves[i], instanciaDisparador)){ //Verifica se o tiro pegou em alguma das naves restantes
@@ -350,7 +341,7 @@ void display(void){
                     Naves[i].y = Naves[i].y - Naves[i].veloc;
                     if(i ==1){
                         calculaPontoCentral(Naves[i]);
-                        printf("NAVE %d [ larg %d, alt %d, x %f y %f xC %f yC %f \n", i, Naves[i].modelo.largura, Naves[i].modelo.altura, Naves[i].x, Naves[i].y, Naves[i].xCentral, Naves[i].yCentral);
+                        //("NAVE %d [ larg %d, alt %d, x %f y %f xC %f yC %f \n", i, Naves[i].modelo.largura, Naves[i].modelo.altura, Naves[i].x, Naves[i].y, Naves[i].xCentral, Naves[i].yCentral);
                     }
                 }
                 glutPostRedisplay();
@@ -360,11 +351,11 @@ void display(void){
         //atualiza disparos
         for(i=0;i<Disparos.size();i++){
             DesenhaIntanciaDeModelo(Disparos[i]);
-            if(Disparos[i].y==80){}
+            if(Disparos[i].y==glOrthoY+5){}
             else{
                 for(int j = 0; j < Naves.size(); j++){
                     if(VerificaColisao(Disparos[i], Naves[j])){ //Verifica se o tiro pegou em alguma das naves restantes
-                        printf("COLIDIU NAVE (%d, %d) TIRO (%d, %d)", Naves[j].modelo.altura, Naves[j].modelo.largura, Disparos[i].modelo.altura, Disparos[i].modelo.largura);
+                        //printf("COLIDIU NAVE (%d, %d) TIRO (%d, %d)", Naves[j].modelo.altura, Naves[j].modelo.largura, Disparos[i].modelo.altura, Disparos[i].modelo.largura);
                         Naves.erase(Naves.begin() + j); // elimina a nave
                         Disparos.erase(Disparos.begin() + i); // elimina o tiro
                     }
@@ -377,15 +368,14 @@ void display(void){
         int r;
         string imagemFinal;
         if(numeroDeVidas > 0){
-        imagemFinal = "./JogoImagens/voce-venceu.png";
-        r = Image.Load(imagemFinal.c_str());
-        Image.Display();
+            imagemFinal = "./JogoImagens/voce-venceu.png";
+            r = Image.Load(imagemFinal.c_str());
+            Image.Display();
         }else{
             imagemFinal = "./JogoImagens/fim-de-jogo.png";
             r = Image.Load(imagemFinal.c_str());
             Image.Display();
         }
-
     }
     glutSwapBuffers();
 }
