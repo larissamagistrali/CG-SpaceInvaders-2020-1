@@ -31,7 +31,12 @@ static struct timeval last_idle_time;
 //------------------------JOGO---------------------------------
 
 //animate
-float dt=1;
+float dt;
+double AccumDeltaT=0;
+double fps;
+double velocidade=1;
+double tamanhoRestante;
+
 void animate()
 {
     static float AccumTime=0;
@@ -57,13 +62,7 @@ void animate()
     glutPostRedisplay();
 }
 
-//Definicao das structs
-
-//Ponto
-typedef struct{
-    int x;
-    int y;
-} Ponto;
+//----Definicao das structs----
 
 //Cor
 typedef struct{
@@ -83,32 +82,28 @@ typedef struct{
     float x; //x,y posicao do objeto no universo
     float y;
     float veloc;
-    float xCentral;
-    float yCentral;
 } Instancia;
 
-//Variaveis
-int glOrthoX=450, glOrthoY=225;
+//-----Variaveis-----
 
+//tamanho glortho
+int glOrthoX=250, glOrthoY=125;
+
+//vidas
 int numeroDeVidas=3;
 ImageClass numVidas;
 
+//Plano de fundo
 ImageClass Image;
 
+//Modelos
 ModeloDeObjeto modeloProjetil, modeloDisparador, modeloNaveAzul, modeloNaveRoxa, modeloNaveVermelha, modeloNaveRosa;
 
+//Instancias
 Instancia instanciaDisparador, instanciaNave1,instanciaNave2,instanciaNave3,instanciaNave4,instanciaNave5,instanciaNave6,instanciaNave7,instanciaNave8;
 vector <Instancia> Naves;
 vector <Instancia> Disparos;
-
-//ponto central
-void calculaPontoCentral(Instancia inst){
-    float xC = inst.x - (inst.modelo.largura / 2);
-    float yC = inst.y + (inst.modelo.altura / 2);
-    inst.xCentral = xC;
-    inst.yCentral = yC;
-    printf("XC %f YC %f\n", xC, yC);
-}
+vector <Instancia> DisparosNave;
 
 //objetos
 void LeArquivoModelo(ModeloDeObjeto &modelo, char *path){
@@ -147,8 +142,6 @@ void CriaInstancia(Instancia &i, ModeloDeObjeto &m, float x1, float y1, float v)
     i.x=x1;
     i.y=y1;
     i.veloc=v;
-    i.xCentral = x1 - (m.largura / 2);
-    i.yCentral = y1 - (m.altura / 2);
 }
 
 void DesenhaIntanciaDeModelo(Instancia &inst){
@@ -156,24 +149,24 @@ void DesenhaIntanciaDeModelo(Instancia &inst){
     glPushMatrix();
         glLoadIdentity();
         glTranslatef(inst.x, inst.y, 0);
-        float dx =inst.modelo.largura, dy = inst.modelo.altura;
+        float dx = -inst.modelo.largura / 4., dy = inst.modelo.altura / 2. - 0.5; //nao entendi pq isso
         int i, j;
         for (i = 0; i < inst.modelo.largura; i++) {
             for (j = 0; j < inst.modelo.altura; j++){
-                if(inst.modelo.cores[i][j].r==0 && inst.modelo.cores[i][j].g==0 && inst.modelo.cores[i][j].b==0){}
+                if(inst.modelo.cores[i][j].r==0 && inst.modelo.cores[i][j].b==0 && inst.modelo.cores[i][j].g==0){}
                 else{
                     glBegin(GL_QUADS);
                     glColor3ub(inst.modelo.cores[i][j].r, inst.modelo.cores[i][j].g, inst.modelo.cores[i][j].b);
                     glVertex2f(dx, dy);
-                    glVertex2f(dx + 1 ,dy);
-                    glVertex2f(dx + 1, dy + 1);
-                    glVertex2f(dx, dy + 1);
+                    glVertex2f(dx + 0.5 ,dy);
+                    glVertex2f(dx + 0.5, dy + 0.5);
+                    glVertex2f(dx, dy + 0.5);
                     glEnd();
                 }
-                dx=dx+1;
+                dx += 0.5;
             }
-            dy=dy-1;
-            dx=inst.modelo.largura;
+            dy -= 0.5;
+            dx = -inst.modelo.largura / 4.;
         }
     glPopMatrix();
 }
@@ -211,24 +204,45 @@ void CriaInstanciasDeNaves(){
 
 //disparos
 void Dispara(){
-    printf("Dispara() \n");
+    //printf("Dispara() \n");
     Instancia i;
-    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y, 0.3);
+    CriaInstancia(i,modeloProjetil,instanciaDisparador.x-0.5,instanciaDisparador.y+4.5, 0.3);
     Disparos.push_back(i);
+}
+
+void naveDispara(Instancia nave){
+    //Instancia i;
+    //CriaInstancia(i,modeloProjetil, (nave.x + 2) , nave.y + 3, 0.3); //x,y,veloc aleatorios
+    //DisparosNave.push_back(i);
 }
 
 
 //colisao
-bool VerificaColisao(Instancia &inst1, Instancia &inst2){
-    float xC1 = inst1.x - (inst1.modelo.largura / 2);
-    float xC2 = inst2.x - (inst2.modelo.largura / 2);
-    float yC1 = inst1.y + (inst1.modelo.altura / 2);
-    float yC2 = inst2.y + (inst2.modelo.altura / 2);
+bool VerificaColisao(Instancia &nave, Instancia &inst2){
+    float xCnave = (nave.x - 1);
+    float xC2 = inst2.x;
+    float yCnave = (nave.y + 6 + 0.5);
+    float yC2 = inst2.y;
 
-    if (xC2 <= xC1 + inst1.modelo.largura &&
-        xC2 + inst2.modelo.largura > xC1 &&
-        yC2 <= yC1 + inst1.modelo.altura &&
-        yC2 + inst2.modelo.altura >= yC1) {
+    if (xC2 <= xCnave + nave.modelo.largura &&
+        xC2 + inst2.modelo.largura > xCnave &&
+        yC2 <= yCnave + nave.modelo.altura / 2 &&
+        yC2 + inst2.modelo.altura / 2 > yCnave) {
+            return true;
+    }
+    return false;
+}
+
+bool VerificaColisaoNaveDisparador(Instancia &nave, Instancia &disparador){
+    float xCnave = (nave.x + 1);
+    float xCdisp = disparador.x;
+    float yCnave = (nave.y + 6 + 0.5);
+    float yCdisp = disparador.y + 2;
+
+    if (xCdisp < xCnave + nave.modelo.largura &&
+        xCdisp + disparador.modelo.largura / 2 > xCnave &&
+        yCdisp < yCnave + nave.modelo.altura / 2 &&
+        yCdisp + disparador.modelo.altura / 2 >= yCnave) {
             return true;
     }
     return false;
@@ -254,14 +268,14 @@ void DesenhaChao(){
 void arrow_keys(int a_keys, int x, int y){
     switch (a_keys){
     case GLUT_KEY_RIGHT:
-        if(instanciaDisparador.x==glOrthoX-10){}
+        if(instanciaDisparador.x==glOrthoX-5){}
         else{
             instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc; //arrumar pra segundos
             glutPostRedisplay();
         }
         break;
     case GLUT_KEY_LEFT:
-        if(instanciaDisparador.x==20){}
+        if(instanciaDisparador.x==5){}
         else{
             instanciaDisparador.x=instanciaDisparador.x-instanciaDisparador.veloc;
             glutPostRedisplay();
@@ -304,7 +318,7 @@ void init(void){
     CarregaModelos();
 
     //instancias
-    CriaInstancia(instanciaDisparador, modeloDisparador,glOrthoX/2,3,2.5);
+    CriaInstancia(instanciaDisparador, modeloDisparador,glOrthoX/2,3.4,3);
     CriaInstanciasDeNaves();
 }
 
@@ -331,6 +345,11 @@ void display(void){
     Image.SetPos(0, 0);
     Image.Display();
 
+    //tempo naves
+    AccumDeltaT += dt; // Tempo acumulado
+    fps = 1.0/dt; // FPS
+
+    int i;
     if(Naves.size() != 0 && numeroDeVidas > 0){
         numVidas.SetPos(glOrthoX-70, glOrthoY-20);
         numVidas.Display();
@@ -351,8 +370,8 @@ void display(void){
         DesenhaChao();
         //atualiza disparador
         DesenhaIntanciaDeModelo(instanciaDisparador);
+
         //Atualiza Naves
-        int i;
         for(i=0;i<Naves.size();i++){
             DesenhaIntanciaDeModelo(Naves[i]);
             if(Naves[i].y <= -10){
@@ -364,23 +383,39 @@ void display(void){
                     Naves.erase(Naves.begin() + i);
                     numeroDeVidas = numeroDeVidas - 1;
                 }else{
-                    Naves[i].y = Naves[i].y - 1; //(glOrthoY/Naves[i].veloc)*(1/dt); //CALCULO DE TEMPO
-                    if(i ==1){
-                        calculaPontoCentral(Naves[i]);
-                        //("NAVE %d [ larg %d, alt %d, x %f y %f xC %f yC %f \n", i, Naves[i].modelo.largura, Naves[i].modelo.altura, Naves[i].x, Naves[i].y, Naves[i].xCentral, Naves[i].yCentral);
+                    tamanhoRestante = glutGet(GLUT_WINDOW_HEIGHT) - Naves[i].y;
+                    velocidade = tamanhoRestante / (Naves[i].veloc - AccumDeltaT) / fps;
+                    Naves[i].y = Naves[i].y - 0.1; //-Naves[i].y * velocidade; //CALCULO TEMPO
+                    int chanceDeDesparo = rand() % 15;
+                    if(chanceDeDesparo == 1){
+                        naveDispara(Naves[i]);
+                        glutPostRedisplay();
                     }
+                    chanceDeDesparo = 0;
                 }
                 glutPostRedisplay();
             }
         }
+
+        for(i=0;i<DisparosNave.size();i++){
+            DesenhaIntanciaDeModelo(DisparosNave[i]);
+            if(DisparosNave[i].y==0){}
+            else{
+                if(VerificaColisao(instanciaDisparador, DisparosNave[i])){ //Verifica se o tiro pegou em alguma das naves restantes
+                    DisparosNave.erase(DisparosNave.begin() + i); // elimina o tiro
+                }
+                DisparosNave[i].y = DisparosNave[i].y - DisparosNave[i].veloc;
+                glutPostRedisplay();
+            }
+        }
+
         //atualiza disparos
         for(i=0;i<Disparos.size();i++){
             DesenhaIntanciaDeModelo(Disparos[i]);
             if(Disparos[i].y==glOrthoY+5){}
             else{
                 for(int j = 0; j < Naves.size(); j++){
-                    if(VerificaColisao(Disparos[i], Naves[j])){ //Verifica se o tiro pegou em alguma das naves restantes
-                        //printf("COLIDIU NAVE (%d, %d) TIRO (%d, %d)", Naves[j].modelo.altura, Naves[j].modelo.largura, Disparos[i].modelo.altura, Disparos[i].modelo.largura);
+                    if(VerificaColisao(Naves[j],Disparos[i])){ //Verifica se o tiro pegou em alguma das naves restantes
                         Naves.erase(Naves.begin() + j); // elimina a nave
                         Disparos.erase(Disparos.begin() + i); // elimina o tiro
                     }
@@ -414,6 +449,7 @@ int main(int argc, char **argv){
     glutCreateWindow("SpaceInvaders");
     init();
     glutDisplayFunc(display);
+     glutIdleFunc(animate);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(arrow_keys);
