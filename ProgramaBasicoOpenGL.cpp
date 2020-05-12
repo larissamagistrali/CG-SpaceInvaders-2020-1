@@ -57,6 +57,8 @@ typedef struct{
     float x; //x,y posicao do objeto no universo
     float y;
     float veloc;
+    float xCentral;
+    float yCentral;
 } Instancia;
 
 //Variaveis
@@ -73,7 +75,14 @@ vector <Instancia> Naves;
 vector <Instancia> Disparos;
 //Instancia Disparos[100];
 //int contDisparos=0;
+void calculaPontoCentral(Instancia inst){
+    float xC = inst.x - (inst.modelo.largura / 2);
+    float yC = inst.y + (inst.modelo.altura / 2);
+    inst.xCentral = xC;
+    inst.yCentral = yC;
+    printf("XC %f YC %f\n", xC, yC);
 
+}
 
 //objetos
 void LeArquivoModelo(ModeloDeObjeto &modelo, char *path){
@@ -112,6 +121,8 @@ void CriaInstancia(Instancia &i, ModeloDeObjeto &m, float x1, float y1, float v)
     i.x=x1;
     i.y=y1;
     i.veloc=v;
+    i.xCentral = x1 - (m.largura / 2);
+    i.yCentral = y1 - (m.altura / 2);
 }
 
 void DesenhaIntanciaDeModelo(Instancia &inst){
@@ -190,10 +201,15 @@ void Dispara(){
 
 //colisao
 bool VerificaColisao(Instancia &inst1, Instancia &inst2){
-    if (inst2.x <= inst1.x + inst1.modelo.largura &&
-        inst2.x + inst2.modelo.largura > inst1.x &&
-        inst2.y <= inst1.y + inst1.modelo.altura &&
-        inst2.y + inst2.modelo.altura >= inst1.y) {
+    float xC1 = inst1.x - (inst1.modelo.largura / 2);
+    float xC2 = inst2.x - (inst2.modelo.largura / 2);
+    float yC1 = inst1.y + (inst1.modelo.altura / 2);
+    float yC2 = inst2.y + (inst2.modelo.altura / 2);
+
+    if (xC2 <= xC1 + inst1.modelo.largura &&
+        xC2 + inst2.modelo.largura > xC1 &&
+        yC2 <= yC1 + inst1.modelo.altura &&
+        yC2 + inst2.modelo.altura >= yC1) {
             return true;
     }
     return false;
@@ -332,6 +348,10 @@ void display(void){
                     numeroDeVidas = numeroDeVidas - 1;
                 }else{
                     Naves[i].y = Naves[i].y - Naves[i].veloc;
+                    if(i ==1){
+                        calculaPontoCentral(Naves[i]);
+                        printf("NAVE %d [ larg %d, alt %d, x %f y %f xC %f yC %f \n", i, Naves[i].modelo.largura, Naves[i].modelo.altura, Naves[i].x, Naves[i].y, Naves[i].xCentral, Naves[i].yCentral);
+                    }
                 }
                 glutPostRedisplay();
             }
