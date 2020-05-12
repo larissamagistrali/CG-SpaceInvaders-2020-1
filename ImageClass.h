@@ -46,8 +46,8 @@ protected:
 			cout << "Error loading image " << name << "." << endl;
 			return false;
 		}
-		cout << "Image " << name << " loaded !"<< endl;
-		cout << "Canais:" << channels << endl;
+		//cout << "Image " << name << " loaded !"<< endl;
+		//cout << "Canais:" << channels << endl;
 
 		return true;
 	}

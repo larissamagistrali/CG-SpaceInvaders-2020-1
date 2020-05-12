@@ -30,6 +30,33 @@ static struct timeval last_idle_time;
 #include <vector>
 //------------------------JOGO---------------------------------
 
+//animate
+float dt=1;
+void animate()
+{
+    static float AccumTime=0;
+
+#ifdef _WIN32
+    DWORD time_now;
+    time_now = GetTickCount();
+    dt = (float) (time_now - last_idle_time) / 1000.0;
+#else
+    // Figure out time elapsed since last call to idle function
+    struct timeval time_now;
+    gettimeofday(&time_now, NULL);
+    dt = (float)(time_now.tv_sec  - last_idle_time.tv_sec) +
+         1.0e-6*(time_now.tv_usec - last_idle_time.tv_usec);
+#endif
+    AccumTime +=dt;
+    if (AccumTime >=3) // imprime o FPS a cada 3 segundos
+    {
+        cout << 1.0/dt << " FPS"<< endl;
+        AccumTime = 0;
+    }
+    last_idle_time = time_now;
+    glutPostRedisplay();
+}
+
 //Definicao das structs
 
 //Ponto
@@ -49,7 +76,6 @@ typedef struct{
     int largura;
     Cor cores[100][100];
 } ModeloDeObjeto;
-
 
 //Instancia de um objeto
 typedef struct{
@@ -163,14 +189,14 @@ void CarregaModelos(){
 
 void CriaInstanciasDeNaves(){
     srand(time(NULL));
-    CriaInstancia(instanciaNave1,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0.01);
-    CriaInstancia(instanciaNave2,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0.015);
-    CriaInstancia(instanciaNave3,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0.02);
-    CriaInstancia(instanciaNave4,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0.025);
-    CriaInstancia(instanciaNave5,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0.03);
-    CriaInstancia(instanciaNave6,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0.035);
-    CriaInstancia(instanciaNave7,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0.04);
-    CriaInstancia(instanciaNave8,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0.045);
+    CriaInstancia(instanciaNave1,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,5); //velocidade em segundos
+    CriaInstancia(instanciaNave2,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,5);
+    CriaInstancia(instanciaNave3,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,7);
+    CriaInstancia(instanciaNave4,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,8);
+    CriaInstancia(instanciaNave5,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,9);
+    CriaInstancia(instanciaNave6,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,11);
+    CriaInstancia(instanciaNave7,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,13);
+    CriaInstancia(instanciaNave8,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,15);
 
     Naves.push_back(instanciaNave1);
     Naves.push_back(instanciaNave2);
@@ -187,7 +213,7 @@ void CriaInstanciasDeNaves(){
 void Dispara(){
     printf("Dispara() \n");
     Instancia i;
-    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y+7, 0.3);
+    CriaInstancia(i,modeloProjetil,instanciaDisparador.x,instanciaDisparador.y, 0.3);
     Disparos.push_back(i);
 }
 
@@ -338,7 +364,7 @@ void display(void){
                     Naves.erase(Naves.begin() + i);
                     numeroDeVidas = numeroDeVidas - 1;
                 }else{
-                    Naves[i].y = Naves[i].y - Naves[i].veloc;
+                    Naves[i].y = Naves[i].y - 1; //(glOrthoY/Naves[i].veloc)*(1/dt); //CALCULO DE TEMPO
                     if(i ==1){
                         calculaPontoCentral(Naves[i]);
                         //("NAVE %d [ larg %d, alt %d, x %f y %f xC %f yC %f \n", i, Naves[i].modelo.largura, Naves[i].modelo.altura, Naves[i].x, Naves[i].y, Naves[i].xCentral, Naves[i].yCentral);
@@ -347,7 +373,6 @@ void display(void){
                 glutPostRedisplay();
             }
         }
-
         //atualiza disparos
         for(i=0;i<Disparos.size();i++){
             DesenhaIntanciaDeModelo(Disparos[i]);
@@ -377,6 +402,7 @@ void display(void){
             Image.Display();
         }
     }
+
     glutSwapBuffers();
 }
 
