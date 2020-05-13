@@ -14,25 +14,22 @@
 	</File>
 	<File name="ProgramaBasicoOpenGL.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10504" topLine="20" />
+			<Cursor1 position="705" topLine="20" />
 		</Cursor>
 		<Folding>
-			<Collapse line="40" />
-			<Collapse line="108" />
-			<Collapse line="138" />
+			<Collapse line="37" />
+			<Collapse line="124" />
 			<Collapse line="146" />
-			<Collapse line="173" />
-			<Collapse line="182" />
-			<Collapse line="205" />
-			<Collapse line="212" />
+			<Collapse line="168" />
+			<Collapse line="171" />
 			<Collapse line="220" />
 			<Collapse line="235" />
-			<Collapse line="252" />
-			<Collapse line="268" />
-			<Collapse line="289" />
-			<Collapse line="304" />
-			<Collapse line="325" />
-			<Collapse line="444" />
+			<Collapse line="250" />
+			<Collapse line="266" />
+			<Collapse line="282" />
+			<Collapse line="303" />
+			<Collapse line="317" />
+			<Collapse line="442" />
 		</Folding>
 	</File>
 </CodeBlocks_layout_file>
