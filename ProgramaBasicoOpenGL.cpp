@@ -197,19 +197,12 @@ void CarregaModelos(){
 
 void CriaInstanciasDeNaves(int qtd){
     srand(time(NULL));
-
-    Instancia inst5seg,inst15sesg;
-    CriaInstancia(inst5seg,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0,5);
-    CriaInstancia(inst15sesg,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0,15);
-    Naves.push_back(inst5seg);
-    Naves.push_back(inst15sesg);
-
     for(int i=0;i<qtd;i++){
         Instancia instAzul,instRosa,instVermelha,instRoxa;
-        CriaInstancia(instAzul,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0, 4+(rand() % 15));
-        CriaInstancia(instRosa,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0,4+(rand() % 15));
-        CriaInstancia(instVermelha,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0,4+(rand() % 15));
-        CriaInstancia(instRoxa,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0,4+(rand() % 15));
+        CriaInstancia(instAzul,modeloNaveAzul,10+(rand() % 220),glOrthoY+10,0, 4+(rand() % 15));
+        CriaInstancia(instRosa,modeloNaveRosa,10+(rand() % 220),glOrthoY+10,0,4+(rand() % 15));
+        CriaInstancia(instVermelha,modeloNaveVermelha,10+(rand() % 220),glOrthoY+10,0,4+(rand() % 15));
+        CriaInstancia(instRoxa,modeloNaveRoxa,10+(rand() % 220),glOrthoY+10,0,4+(rand() % 15));
         Naves.push_back(instAzul);
         Naves.push_back(instRosa);
         Naves.push_back(instVermelha);
@@ -225,10 +218,10 @@ void Dispara(){
     Disparos.push_back(i);
 }
 
-void naveDispara(Instancia nave){
-    //Instancia i;
-    //CriaInstancia(i,modeloProjetil, (nave.x + 2) , nave.y + 3, 0.3); //x,y,veloc aleatorios
-    //DisparosNave.push_back(i);
+void NaveDispara(Instancia nave){
+    Instancia i;
+    CriaInstancia(i,modeloProjetil, (nave.x + 2) , nave.y + 3, 0.3,0); //x,y,veloc aleatorios
+    DisparosNave.push_back(i);
 }
 
 
@@ -308,6 +301,7 @@ void keyboard(unsigned char key, int x, int y){
     case ' ':
         Dispara();
         glutPostRedisplay();
+        break;
     default:
         break;
     }
@@ -333,7 +327,7 @@ void init(void){
 
     //instancias
     CriaInstancia(instanciaDisparador, modeloDisparador,glOrthoX/2,3.5,3,0);
-    int qtdInstancias=2; // cria x instancias de cada modelo de nave +2 (pelo menos uma com 5 e 15 seg)
+    int qtdInstancias=5; // cria x instancias de cada modelo de nave
     CriaInstanciasDeNaves(qtdInstancias);
 }
 
@@ -414,18 +408,19 @@ void display(void){
                     Naves[i].B.set(Naves[i].A.getX(), Naves[i].A.getY());
                     Naves[i].y = Naves[i].B.getY();
 
-                    int chanceDeDesparo = rand() % 15;
+                    /*int chanceDeDesparo = rand() % 15;
                     if(chanceDeDesparo == 1){
-                        naveDispara(Naves[i]);
+                        NaveDispara(Naves[i]);
                     }
-                    chanceDeDesparo = 0;
+                    chanceDeDesparo = 0;*/
                 }
             }
         }
 
-        for(i=0;i<DisparosNave.size();i++){ //REVISAR
+        //atulaiza disparos naves
+        /*for(i=0;i<DisparosNave.size();i++){
             DesenhaIntanciaDeModelo(DisparosNave[i]);
-            if(DisparosNave[i].y==0){
+            if(DisparosNave[i].y<=0){
                 DisparosNave.erase(DisparosNave.begin() + i);
             }
             else{
@@ -434,12 +429,12 @@ void display(void){
                 }
                 DisparosNave[i].y = DisparosNave[i].y - DisparosNave[i].veloc;
             }
-        }
+        }*/
 
         //atualiza disparos
         for(i=0;i<Disparos.size();i++){
             DesenhaIntanciaDeModelo(Disparos[i]);
-            if(Disparos[i].y==80){}
+            if(Disparos[i].y>=glOrthoY+3){}
             else{
                 for(int j = 0; j < Naves.size(); j++){
                     if(VerificaColisao(Naves[j], Disparos[i])){ //Verifica se o tiro pegou em alguma das naves restantes
@@ -455,9 +450,9 @@ void display(void){
         int r;
         string imagemFinal;
         if(numeroDeVidas > 0){
-        imagemFinal = "./JogoImagens/voce-venceu.png";
-        r = Image.Load(imagemFinal.c_str());
-        Image.Display();
+            imagemFinal = "./JogoImagens/voce-venceu.png";
+            r = Image.Load(imagemFinal.c_str());
+            Image.Display();
         }else{
             imagemFinal = "./JogoImagens/fim-de-jogo.png";
             r = Image.Load(imagemFinal.c_str());
