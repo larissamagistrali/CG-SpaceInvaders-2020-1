@@ -114,7 +114,7 @@ ImageClass Image;
 ModeloDeObjeto modeloProjetil, modeloDisparador, modeloNaveAzul, modeloNaveRoxa, modeloNaveVermelha, modeloNaveRosa;
 
 //Instancias
-Instancia instanciaDisparador, instanciaNave1,instanciaNave2,instanciaNave3,instanciaNave4,instanciaNave5,instanciaNave6,instanciaNave7,instanciaNave8;
+Instancia instanciaDisparador, instanciaNave1,instanciaNave2;
 vector <Instancia> Naves;
 vector <Instancia> Disparos;
 vector <Instancia> DisparosNave;
@@ -195,37 +195,37 @@ void CarregaModelos(){
     LeArquivoModelo(modeloNaveVermelha,"./JogoArquivos/NaveVermelha.txt");
 }
 
-void CriaInstanciasDeNaves(){
+void CriaInstanciasDeNaves(int qtd){
     srand(time(NULL));
-    CriaInstancia(instanciaNave1,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0.01,15);
-    CriaInstancia(instanciaNave2,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0.01,13);
-    CriaInstancia(instanciaNave3,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0.02,5);
-    CriaInstancia(instanciaNave4,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0.025,7);
-    CriaInstancia(instanciaNave5,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0.03,8);
-    CriaInstancia(instanciaNave6,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0.03,9);
-    CriaInstancia(instanciaNave7,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0.04,10);
-    CriaInstancia(instanciaNave8,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0.04,11);
 
-    Naves.push_back(instanciaNave1);
-    Naves.push_back(instanciaNave2);
-    Naves.push_back(instanciaNave3);
-    Naves.push_back(instanciaNave4);
-    Naves.push_back(instanciaNave5);
-    Naves.push_back(instanciaNave6);
-    Naves.push_back(instanciaNave7);
-    Naves.push_back(instanciaNave8);
+    Instancia inst5seg,inst15sesg;
+    CriaInstancia(inst5seg,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0,5);
+    CriaInstancia(inst15sesg,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0,15);
+    Naves.push_back(inst5seg);
+    Naves.push_back(inst15sesg);
+
+    for(int i=0;i<qtd;i++){
+        Instancia instAzul,instRosa,instVermelha,instRoxa;
+        CriaInstancia(instAzul,modeloNaveAzul,rand() % glOrthoX-10,glOrthoY+10,0, 4+(rand() % 15));
+        CriaInstancia(instRosa,modeloNaveRosa,rand() % glOrthoX-10,glOrthoY+10,0,4+(rand() % 15));
+        CriaInstancia(instVermelha,modeloNaveVermelha,rand() % glOrthoX-10,glOrthoY+10,0,4+(rand() % 15));
+        CriaInstancia(instRoxa,modeloNaveRoxa,rand() % glOrthoX-10,glOrthoY+10,0,4+(rand() % 15));
+        Naves.push_back(instAzul);
+        Naves.push_back(instRosa);
+        Naves.push_back(instVermelha);
+        Naves.push_back(instRoxa);
+    }
 }
-
 
 //disparos
 void Dispara(){
-    printf("Dispara() \n");
+    //printf("Dispara() \n");
     Instancia i;
     CriaInstancia(i,modeloProjetil,instanciaDisparador.x - 0.5 ,instanciaDisparador.y + 4 + 0.5, 0.3, 0); //x,y,veloc aleatorios
     Disparos.push_back(i);
 }
 
-void naveDispara(Instancia nave){ //REVISAR
+void naveDispara(Instancia nave){
     //Instancia i;
     //CriaInstancia(i,modeloProjetil, (nave.x + 2) , nave.y + 3, 0.3); //x,y,veloc aleatorios
     //DisparosNave.push_back(i);
@@ -233,7 +233,7 @@ void naveDispara(Instancia nave){ //REVISAR
 
 
 //colisao
-bool VerificaColisao(Instancia &nave, Instancia &inst2){ //REVISAR
+bool VerificaColisao(Instancia &nave, Instancia &inst2){
     float xCnave = (nave.x - 1);
     float xC2 = inst2.x;
     float yCnave = (nave.y + 6 + 0.5);
@@ -248,7 +248,7 @@ bool VerificaColisao(Instancia &nave, Instancia &inst2){ //REVISAR
     return false;
 }
 
-bool VerificaColisaoNaveDisparador(Instancia &nave, Instancia &disparador){ //REVISAR
+bool VerificaColisaoNaveDisparador(Instancia &nave, Instancia &disparador){
     float xCnave = (nave.x + 1);
     float xCdisp = disparador.x;
     float yCnave = (nave.y + 6 + 0.5);
@@ -284,14 +284,14 @@ void arrow_keys(int a_keys, int x, int y){
     case GLUT_KEY_RIGHT:
         if(instanciaDisparador.x==glOrthoX-5){}
         else{
-            instanciaDisparador.x=instanciaDisparador.x+1;
+            instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc;
             glutPostRedisplay();
         }
         break;
     case GLUT_KEY_LEFT:
         if(instanciaDisparador.x==5){}
         else{
-            instanciaDisparador.x=instanciaDisparador.x-1;
+            instanciaDisparador.x=instanciaDisparador.x-instanciaDisparador.veloc;
             glutPostRedisplay();
         }
         break;
@@ -333,7 +333,8 @@ void init(void){
 
     //instancias
     CriaInstancia(instanciaDisparador, modeloDisparador,glOrthoX/2,3.5,3,0);
-    CriaInstanciasDeNaves();
+    int qtdInstancias=2; // cria x instancias de cada modelo de nave +2 (pelo menos uma com 5 e 15 seg)
+    CriaInstanciasDeNaves(qtdInstancias);
 }
 
 void reshape(int w, int h){
@@ -399,7 +400,6 @@ void display(void){
                 Vetor RESET;
                 Naves[i].A = RESET;
                 Naves[i].B = RESET;
-                glutPostRedisplay();
             }else{
                 if(VerificaColisaoNaveDisparador(Naves[i], instanciaDisparador)){
                     Naves.erase(Naves.begin() + i);
@@ -417,12 +417,10 @@ void display(void){
                     int chanceDeDesparo = rand() % 15;
                     if(chanceDeDesparo == 1){
                         naveDispara(Naves[i]);
-                        glutPostRedisplay();
                     }
                     chanceDeDesparo = 0;
                 }
             }
-                glutPostRedisplay();
         }
 
         for(i=0;i<DisparosNave.size();i++){ //REVISAR
@@ -435,7 +433,6 @@ void display(void){
                     DisparosNave.erase(DisparosNave.begin() + i); // elimina o tiro
                 }
                 DisparosNave[i].y = DisparosNave[i].y - DisparosNave[i].veloc;
-                glutPostRedisplay();
             }
         }
 
@@ -452,7 +449,6 @@ void display(void){
                     }
                 }
                 Disparos[i].y = Disparos[i].y + Disparos[i].veloc;
-                glutPostRedisplay();
             }
         }
     }else{
@@ -467,11 +463,9 @@ void display(void){
             r = Image.Load(imagemFinal.c_str());
             Image.Display();
         }
-
     }
     glutSwapBuffers();
 }
-
 
 int main(int argc, char **argv){
     glutInit(&argc, argv);
@@ -480,6 +474,7 @@ int main(int argc, char **argv){
     glutInitWindowSize(800, 450);
     glutCreateWindow("SpaceInvaders");
     init();
+    glutIdleFunc(display);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);

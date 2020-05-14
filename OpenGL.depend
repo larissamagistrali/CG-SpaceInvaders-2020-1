@@ -564,7 +564,7 @@
 
 1576701390 c:\users\laris\downloads\exerciciocg-spaceinvaders-larissa\soil\stbi_dds_aug_c.h
 
-1589300212 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\imageclass.cpp
+1589460098 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\imageclass.cpp
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
@@ -574,21 +574,21 @@
 	<GLUT/glut.h>
 	"ImageClass.h"
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\glut.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\glut.h
 	"freeglut.h"
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\freeglut.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\freeglut.h
 	"freeglut_std.h"
 	"freeglut_ext.h"
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\freeglut_std.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\freeglut_std.h
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\freeglut_ext.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\gl\freeglut_ext.h
 
-1589309847 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\imageclass.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\imageclass.h
 	<iostream>
 	<cstdlib>
 	<cstring>
@@ -598,9 +598,9 @@
 	<GL/glut.h>
 	"SOIL/SOIL.h"
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\soil.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\soil.h
 
-1589327922 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\programabasicoopengl.cpp
+1589468705 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\programabasicoopengl.cpp
 	<iostream>
 	<cmath>
 	<cstdlib>
@@ -617,24 +617,25 @@
 	<string>
 	<time.h>
 	<vector>
+	"Temporizador.h"
 
-1589300212 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_dxt.cpp
+1589460098 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_dxt.cpp
 	"image_DXT.h"
 	<math.h>
 	<stdlib.h>
 	<string.h>
 	<stdio.h>
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_dxt.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_dxt.h
 
-1589300212 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_helper.cpp
+1589460098 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_helper.cpp
 	"image_helper.h"
 	<stdlib.h>
 	<math.h>
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_helper.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\image_helper.h
 
-1589300212 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\soil.cpp
+1589460098 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\soil.cpp
 	<windows.h>
 	<wingdi.h>
 	<GL/gl.h>
@@ -650,10 +651,10 @@
 	<string.h>
 	<iostream>
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stb_image_aug.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stb_image_aug.h
 	<stdio.h>
 
-1589300212 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stb_image_aug.cpp
+1589460098 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stb_image_aug.cpp
 	"stb_image_aug.h"
 	<math.h>
 	<string.h>
@@ -665,9 +666,9 @@
 	"stbi_DDS_aug.h"
 	"stbi_DDS_aug_c.h"
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stbi_dds_aug.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stbi_dds_aug.h
 
-1589300212 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stbi_dds_aug_c.h
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\soil\stbi_dds_aug_c.h
 
 1589294479 source:/home/nikolas/Desktop/CG-SpaceInvaders-2020-1/ImageClass.cpp
 	<stdio.h>
@@ -773,4 +774,12 @@
 1589294479 /home/nikolas/Desktop/CG-SpaceInvaders-2020-1/SOIL/stbi_DDS_aug.h
 
 1589294479 /home/nikolas/Desktop/CG-SpaceInvaders-2020-1/SOIL/stbi_DDS_aug_c.h
+
+1589460098 c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\temporizador.h
+	<iostream>
+	<windows.h>
+	<sys/time.h>
+
+1589460098 source:c:\users\laris\onedrive\햞ea de trabalho\github\cg-spaceinvaders-2020-1\temporizador.cpp
+	"Temporizador.h"
 
