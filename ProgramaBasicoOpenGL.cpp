@@ -327,7 +327,7 @@ void init(void){
 
     //instancias
     CriaInstancia(instanciaDisparador, modeloDisparador,glOrthoX/2,3.5,3,0);
-    int qtdInstancias=5; // cria x instancias de cada modelo de nave
+    int qtdInstancias=2; // cria x instancias de cada modelo de nave
     CriaInstanciasDeNaves(qtdInstancias);
 }
 
