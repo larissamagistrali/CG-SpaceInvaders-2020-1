@@ -506,6 +506,7 @@ int main(int argc, char **argv){
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(800, 450);
     glutCreateWindow("SpaceInvaders");
+    glutFullScreen();
     init();
     glutIdleFunc(display);
     glutDisplayFunc(display);
