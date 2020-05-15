@@ -210,52 +210,53 @@ void CriaInstanciasDeNaves(int qtd){
     }
 }
 
-//disparos
+//Disparo do jogador
 void Dispara(){
-    //printf("Dispara() \n");
     Instancia i;
     CriaInstancia(i,modeloProjetil,instanciaDisparador.x - 0.5 ,instanciaDisparador.y + 4 + 0.5, 0.3, 0); //x,y,veloc aleatorios
     Disparos.push_back(i);
 }
 
+//Disparo da nave
 void NaveDispara(Instancia nave){
     Instancia i;
     CriaInstancia(i,modeloProjetil, (nave.x + 2) , nave.y + 3, 0.3,0); //x,y,veloc aleatorios
     DisparosNave.push_back(i);
 }
 
+//Colisao entre nave e disparo do jogador
+bool VerificaColisaoNaveDisparo(Instancia &nave, Instancia &disparo){
+    float xCentralNave = (nave.x - 1);
+    float xCentralDisparo = disparo.x;
+    float yCentralNave = (nave.y + 6 + 0.5);
+    float yCentralDisparo = disparo.y;
 
-//colisao
-bool VerificaColisao(Instancia &nave, Instancia &inst2){
-    float xCnave = (nave.x - 1);
-    float xC2 = inst2.x;
-    float yCnave = (nave.y + 6 + 0.5);
-    float yC2 = inst2.y;
-
-    if (xC2 <= xCnave + nave.modelo.largura &&
-        xC2 + inst2.modelo.largura > xCnave &&
-        yC2 <= yCnave + nave.modelo.altura / 2 &&
-        yC2 + inst2.modelo.altura / 2 > yCnave) {
+    if (xCentralDisparo <= xCentralNave + nave.modelo.largura &&
+        xCentralDisparo + disparo.modelo.largura > xCentralNave &&
+        yCentralDisparo <= yCentralNave + nave.modelo.altura / 2 &&
+        yCentralDisparo + disparo.modelo.altura / 2 > yCentralNave) {
             return true;
     }
     return false;
 }
 
+//Colisao entre nave e jogador
 bool VerificaColisaoNaveDisparador(Instancia &nave, Instancia &disparador){
-    float xCnave = (nave.x + 1);
-    float xCdisp = disparador.x;
-    float yCnave = (nave.y + 6 + 0.5);
-    float yCdisp = disparador.y + 2;
+    float xCentralNave = (nave.x + 1);
+    float xCentralDisparador = disparador.x;
+    float yCentralNave = (nave.y + 6 + 0.5);
+    float yCentralDisparador = disparador.y + 2;
 
-    if (xCdisp < xCnave + nave.modelo.largura &&
-        xCdisp + disparador.modelo.largura / 2 > xCnave &&
-        yCdisp < yCnave + nave.modelo.altura / 2 &&
-        yCdisp + disparador.modelo.altura / 2 >= yCnave) {
+    if (xCentralDisparador < xCentralNave + nave.modelo.largura &&
+        xCentralDisparador + disparador.modelo.largura / 2 > xCentralNave &&
+        yCentralDisparador < yCentralNave + nave.modelo.altura / 2 &&
+        yCentralDisparador + disparador.modelo.altura / 2 >= yCentralNave) {
             return true;
     }
     return false;
 }
 
+//Colisao entre disparo da nave e jogador
 bool VerificaColisaoDisparoNaveDisparador(Instancia &disparador, Instancia &disparo){
     float xCentralDisparador = disparador.x - 3;
     float xCentralDisparo = disparo.x;
@@ -271,7 +272,7 @@ bool VerificaColisaoDisparoNaveDisparador(Instancia &disparador, Instancia &disp
     return false;
 }
 
-//chão
+//Gera o chao
 void DesenhaChao(){
     glPushMatrix();
         glLoadIdentity();
@@ -286,18 +287,18 @@ void DesenhaChao(){
     glPopMatrix();
 }
 
-//comandos
+//Comandos do teclado
 void arrow_keys(int a_keys, int x, int y){
     switch (a_keys){
     case GLUT_KEY_RIGHT:
-        if(instanciaDisparador.x==glOrthoX-5){}
+        if(instanciaDisparador.x==glOrthoX-5){} //Limite do final da tela
         else{
             instanciaDisparador.x=instanciaDisparador.x+instanciaDisparador.veloc;
             glutPostRedisplay();
         }
         break;
     case GLUT_KEY_LEFT:
-        if(instanciaDisparador.x==5){}
+        if(instanciaDisparador.x==5){} //Limite do inicio da tela
         else{
             instanciaDisparador.x=instanciaDisparador.x-instanciaDisparador.veloc;
             glutPostRedisplay();
@@ -310,8 +311,8 @@ void arrow_keys(int a_keys, int x, int y){
 
 void keyboard(unsigned char key, int x, int y){
     switch (key){
-    case 27:     // Termina o programa qdo
-        exit(0); // a tecla ESC for pressionada
+    case 27:     //Termina o programa quando a tecla ESC for pressionada
+        exit(0);
         break;
     case ' ':
         Dispara();
@@ -322,10 +323,9 @@ void keyboard(unsigned char key, int x, int y){
     }
 }
 
-
-//PADRAO
+//Padrao
 void init(void){
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //cor de fundo
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //Cor de fundo
     int r;
     string nome = "./JogoImagens/cenario.png";
     r = Image.Load(nome.c_str());
@@ -334,50 +334,51 @@ void init(void){
     string vidas = "./JogoImagens/life3.png";
     v = numVidas.Load(vidas.c_str());
 
-    if (!r) exit(1); // Erro na carga da imagem
-    if (!v) exit(1); // Erro na carga da imagem
+    if (!r) exit(1); //Erro na carga da imagem
+    if (!v) exit(1); //Erro na carga da imagem
 
-    //modelos
+    //Carrega os modelos
     CarregaModelos();
 
-    //instancias
+    //Cria as instancias
     CriaInstancia(instanciaDisparador, modeloDisparador,glOrthoX/2,3.5,3,0);
-    int qtdInstancias=2; // cria x instancias de cada modelo de nave
+    int qtdInstancias=2; //Cria x instancias de cada modelo de nave (4 modelos * 2 = 8 naves)
     CriaInstanciasDeNaves(qtdInstancias);
 }
 
 void reshape(int w, int h){
-    glMatrixMode(GL_PROJECTION);// Reset the coordinate system before modifying
+    glMatrixMode(GL_PROJECTION);//Reset the coordinate system before modifying
     glLoadIdentity();
-    glViewport(0, 0, w, h);// Define a area a ser ocupada pela �rea OpenGL dentro da Janela
-    glMatrixMode(GL_MODELVIEW);// Define os limites l�gicos da �rea OpenGL dentro da Janela
+    glViewport(0, 0, w, h);//Define a area a ser ocupada pela �rea OpenGL dentro da Janela
+    glMatrixMode(GL_MODELVIEW);//Define os limites l�gicos da �rea OpenGL dentro da Janela
     glLoadIdentity();
 }
 
+//Variaveis para o disparo da nave
 int chanceDeDesparo = 0;
-
 double umSegundo = 0;
 
 void display(void){
-
     srand(time(0));
+    //srand(time(NULL));
 
-    //--------tempo naves----------
+    //Tempo
     double dt = T.getDeltaT();
 
-    umSegundo += dt;
+    umSegundo += dt; //Verifica um segundo
+    AccumDeltaT += dt; //Tempo acumulado
+    fps = 1.0/dt; //FPS
 
-    AccumDeltaT += dt; // Tempo acumulado
-    fps = 1.0/dt; // FPS
+    //Imprime FPS a cada 3 segundos
     if (AccumDeltaT >=3){
         cout << 1.0/dt << " FPS"<< endl;
         AccumDeltaT = 0;
     }
-    //-----------------------------
-    glClear(GL_COLOR_BUFFER_BIT); // Limpa a tela coma cor de fundo
-    glMatrixMode(GL_PROJECTION);// Define os limites logicos da area OpenGL dentro da Janela
+
+    glClear(GL_COLOR_BUFFER_BIT); //Limpa a tela coma cor de fundo
+    glMatrixMode(GL_PROJECTION);//Define os limites logicos da area OpenGL dentro da Janela
     glLoadIdentity();
-    glOrtho(0, glOrthoX, 0, glOrthoY, -1, 1);// Define os limites logicos da area OpenGL dentro da Janela
+    glOrtho(0, glOrthoX, 0, glOrthoY, -1, 1);//Define os limites logicos da area OpenGL dentro da Janela
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     float zoomH = (glutGet(GLUT_WINDOW_WIDTH))/(double)Image.SizeX();
@@ -388,54 +389,53 @@ void display(void){
     Image.Display();
 
     int i;
+
+    //Se ainda tem nave e o jogador tem vida o jogo continua
     if(Naves.size() != 0 && numeroDeVidas > 0){
         numVidas.SetPos(glOrthoX-40, glOrthoY-15);
-        numVidas.Display();
+        numVidas.Display(); //Mostra vidas
 
-        if(numeroDeVidas == 2){
+        if(numeroDeVidas == 2){ //Troca vida
             int v;
             string vida = "./JogoImagens/life2.png";
             v = numVidas.Load(vida.c_str());
-        }else if(numeroDeVidas == 1){
+        }else if(numeroDeVidas == 1){ //Troca vida
             int v;
             string vida = "./JogoImagens/life1.png";
             v = numVidas.Load(vida.c_str());
         }
 
-        //srand(time(NULL));
-
-
-        //atualiza chao
+        //Atualiza o chao
         DesenhaChao();
 
-        //atualiza disparador
+        //Atualiza o jogador
         DesenhaIntanciaDeModelo(instanciaDisparador);
 
-        //Atualiza Naves
+        //Atualiza naves
         for(i=0;i<Naves.size();i++){
             DesenhaIntanciaDeModelo(Naves[i]);
-            if(Naves[i].y <= -10){
+            if(Naves[i].y <= -10){ //Se a nave passou do chão, volta pro topo
                 Naves[i].y = glOrthoY + 10;
                 Naves[i].x = rand() % glOrthoX-5;
                 Vetor RESET;
                 Naves[i].A = RESET;
                 Naves[i].B = RESET;
             }else{
-                if(VerificaColisaoNaveDisparador(Naves[i], instanciaDisparador)){
+                if(VerificaColisaoNaveDisparador(Naves[i], instanciaDisparador)){ //Se a nave colidiu com o jogador, ele perde vida
                     Naves.erase(Naves.begin() + i);
                     numeroDeVidas = numeroDeVidas - 1;
                 }else{
-                    tamanhoRestante = glOrthoY - Naves[i].B.getY(); // Calcula quanto falta pra chegar no final da janela
-                    velocidade = (tamanhoRestante / (Naves[i].tempo - AccumDeltaT)) / fps; // Calcula quanto de velocidade tem que ter para chegar ao fim
+                    tamanhoRestante = glOrthoY - Naves[i].B.getY(); //Calcula quanto falta pra chegar no final da janela
+                    velocidade = (tamanhoRestante / (Naves[i].tempo - AccumDeltaT)) / fps; //Calcula quanto de velocidade tem que ter para chegar ao fim
 
-                    // Deslocamento
+                    //Deslocamento
                     DIRE.set(0,-1);
                     DIRE.multiply(velocidade);
                     Naves[i].A.add(DIRE);
                     Naves[i].B.set(Naves[i].A.getX(), Naves[i].A.getY());
                     Naves[i].y = Naves[i].B.getY();
 
-                    if(umSegundo >=1){
+                    if(umSegundo >=1){ // A cada segundo a nave tem 25% de chance de realizar um disparo
 
                         chanceDeDesparo = rand() % 4;
 
@@ -450,48 +450,46 @@ void display(void){
             }
         }
 
-        if(umSegundo >= 1){
+        if(umSegundo >= 1){ //Reseta o segundo para auxiliar o disparo da nave
             umSegundo = 0;
         }
 
-        //atulaiza disparos naves
+        //Atualiza os disparos das naves
         for(i=0;i<DisparosNave.size();i++){
             DesenhaIntanciaDeModelo(DisparosNave[i]);
-            if(DisparosNave[i].y<=0){
+            if(DisparosNave[i].y<=0){ //Se o disparo ultrapassa o chão, ele some
                 DisparosNave.erase(DisparosNave.begin() + i);
-            }
-            else{
-                if(VerificaColisaoDisparoNaveDisparador(instanciaDisparador, DisparosNave[i])){ //Verifica se o tiro pegou em alguma das naves restantes
-                    DisparosNave.erase(DisparosNave.begin() + i);
-                    numeroDeVidas = numeroDeVidas - 1; // elimina o tiro
+            }else{
+                if(VerificaColisaoDisparoNaveDisparador(instanciaDisparador, DisparosNave[i])){ //Se o disparo colidiu com o jogador, ele perde vida
+                    DisparosNave.erase(DisparosNave.begin() + i); //Elimina o tiro
+                    numeroDeVidas = numeroDeVidas - 1; //Perde uma vida
                 }
-            DisparosNave[i].y = DisparosNave[i].y - DisparosNave[i].veloc;
+            DisparosNave[i].y = DisparosNave[i].y - DisparosNave[i].veloc; //Movimenta o disparo
             }
         }
 
-        //atualiza disparos
+        //Atualiza os disparos do Jogador
         for(i=0;i<Disparos.size();i++){
             DesenhaIntanciaDeModelo(Disparos[i]);
-            if(Disparos[i].y>=glOrthoY+3){}
+            if(Disparos[i].y>=glOrthoY+3){} //Se o disparo ultrapassa o teto, ele some
             else{
                 for(int j = 0; j < Naves.size(); j++){
-                    if(VerificaColisao(Naves[j], Disparos[i])){ //Verifica se o tiro pegou em alguma das naves restantes
-                        //printf("COLIDIU NAVE (%d, %d) TIRO (%d, %d)", Naves[j].modelo.altura, Naves[j].modelo.largura, Disparos[i].modelo.altura, Disparos[i].modelo.largura);
-                        Naves.erase(Naves.begin() + j); // elimina a nave
-                        Disparos.erase(Disparos.begin() + i); // elimina o tiro
+                    if(VerificaColisaoNaveDisparo(Naves[j], Disparos[i])){ //Se o disparo colidiucom a nave, ela "morre"
+                        Naves.erase(Naves.begin() + j); //Elimina a nave
+                        Disparos.erase(Disparos.begin() + i); //Elimina o tiro
                     }
                 }
-                Disparos[i].y = Disparos[i].y + Disparos[i].veloc;
+                Disparos[i].y = Disparos[i].y + Disparos[i].veloc; //Movimenta o disparo
             }
         }
-    }else{
+    }else{ //Se o jogador perdeu todas as vidas, ou todas as naves foram eliminadas
         int r;
         string imagemFinal;
-        if(numeroDeVidas > 0){
+        if(numeroDeVidas > 0){ //Venceu
             imagemFinal = "./JogoImagens/voce-venceu.png";
             r = Image.Load(imagemFinal.c_str());
             Image.Display();
-        }else{
+        }else{ //Perdeu
             imagemFinal = "./JogoImagens/fim-de-jogo.png";
             r = Image.Load(imagemFinal.c_str());
             Image.Display();
@@ -500,6 +498,7 @@ void display(void){
     glutSwapBuffers();
 }
 
+//Main
 int main(int argc, char **argv){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB);
