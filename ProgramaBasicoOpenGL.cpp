@@ -256,6 +256,21 @@ bool VerificaColisaoNaveDisparador(Instancia &nave, Instancia &disparador){
     return false;
 }
 
+bool VerificaColisaoDisparoNaveDisparador(Instancia &disparador, Instancia &disparo){
+    float xCentralDisparador = disparador.x - 3;
+    float xCentralDisparo = disparo.x;
+    float yCentralDisparador = disparador.y + 2;
+    float yCentralDisparo = disparo.y;
+
+    if (xCentralDisparo < xCentralDisparador + disparador.modelo.largura / 2 &&
+        xCentralDisparo + disparo.modelo.largura > xCentralDisparador &&
+        yCentralDisparo < yCentralDisparador + disparador.modelo.altura / 2 &&
+        yCentralDisparo + disparo.modelo.altura >= yCentralDisparador) {
+            return true;
+    }
+    return false;
+}
+
 //chão
 void DesenhaChao(){
     glPushMatrix();
@@ -316,7 +331,7 @@ void init(void){
     r = Image.Load(nome.c_str());
 
     int v;
-    string vidas = "./JogoImagens/vida3.png";
+    string vidas = "./JogoImagens/life3.png";
     v = numVidas.Load(vidas.c_str());
 
     if (!r) exit(1); // Erro na carga da imagem
@@ -339,9 +354,19 @@ void reshape(int w, int h){
     glLoadIdentity();
 }
 
+int chanceDeDesparo = 0;
+
+double umSegundo = 0;
+
 void display(void){
+
+    srand(time(0));
+
     //--------tempo naves----------
     double dt = T.getDeltaT();
+
+    umSegundo += dt;
+
     AccumDeltaT += dt; // Tempo acumulado
     fps = 1.0/dt; // FPS
     if (AccumDeltaT >=3){
@@ -369,15 +394,16 @@ void display(void){
 
         if(numeroDeVidas == 2){
             int v;
-            string vida = "./JogoImagens/vida2.png";
+            string vida = "./JogoImagens/life2.png";
             v = numVidas.Load(vida.c_str());
         }else if(numeroDeVidas == 1){
             int v;
-            string vida = "./JogoImagens/vida1.png";
+            string vida = "./JogoImagens/life1.png";
             v = numVidas.Load(vida.c_str());
         }
 
-        srand(time(NULL));
+        //srand(time(NULL));
+
 
         //atualiza chao
         DesenhaChao();
@@ -401,6 +427,7 @@ void display(void){
                 }else{
                     tamanhoRestante = glOrthoY - Naves[i].B.getY(); // Calcula quanto falta pra chegar no final da janela
                     velocidade = (tamanhoRestante / (Naves[i].tempo - AccumDeltaT)) / fps; // Calcula quanto de velocidade tem que ter para chegar ao fim
+
                     // Deslocamento
                     DIRE.set(0,-1);
                     DIRE.multiply(velocidade);
@@ -408,28 +435,39 @@ void display(void){
                     Naves[i].B.set(Naves[i].A.getX(), Naves[i].A.getY());
                     Naves[i].y = Naves[i].B.getY();
 
-                    /*int chanceDeDesparo = rand() % 15;
-                    if(chanceDeDesparo == 1){
-                        NaveDispara(Naves[i]);
+                    if(umSegundo >=1){
+
+                        chanceDeDesparo = rand() % 4;
+
+                        if(chanceDeDesparo == 1){
+                            NaveDispara(Naves[i]);
+                        }
+
+                    chanceDeDesparo = 0;
+
                     }
-                    chanceDeDesparo = 0;*/
                 }
             }
         }
 
+        if(umSegundo >= 1){
+            umSegundo = 0;
+        }
+
         //atulaiza disparos naves
-        /*for(i=0;i<DisparosNave.size();i++){
+        for(i=0;i<DisparosNave.size();i++){
             DesenhaIntanciaDeModelo(DisparosNave[i]);
             if(DisparosNave[i].y<=0){
                 DisparosNave.erase(DisparosNave.begin() + i);
             }
             else{
-                if(VerificaColisao(instanciaDisparador, DisparosNave[i])){ //Verifica se o tiro pegou em alguma das naves restantes
-                    DisparosNave.erase(DisparosNave.begin() + i); // elimina o tiro
+                if(VerificaColisaoDisparoNaveDisparador(instanciaDisparador, DisparosNave[i])){ //Verifica se o tiro pegou em alguma das naves restantes
+                    DisparosNave.erase(DisparosNave.begin() + i);
+                    numeroDeVidas = numeroDeVidas - 1; // elimina o tiro
                 }
-                DisparosNave[i].y = DisparosNave[i].y - DisparosNave[i].veloc;
+            DisparosNave[i].y = DisparosNave[i].y - DisparosNave[i].veloc;
             }
-        }*/
+        }
 
         //atualiza disparos
         for(i=0;i<Disparos.size();i++){

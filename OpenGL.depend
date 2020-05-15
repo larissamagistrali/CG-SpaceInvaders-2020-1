@@ -783,3 +783,117 @@
 1589476502 source:c:\users\laris\onedrive\Área de trabalho\github\cg-spaceinvaders-2020-1\temporizador.cpp
 	"Temporizador.h"
 
+1589513983 source:/home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/ImageClass.cpp
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<string.h>
+	<windows.h>
+	"gl\glut.h"
+	<GLUT/glut.h>
+	"ImageClass.h"
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/ImageClass.h
+	<iostream>
+	<cstdlib>
+	<cstring>
+	<windows.h>
+	"gl\glut.h"
+	<GLUT/glut.h>
+	<GL/glut.h>
+	"SOIL/SOIL.h"
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/SOIL.h
+
+1589521594 source:/home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/ProgramaBasicoOpenGL.cpp
+	<iostream>
+	<cmath>
+	<cstdlib>
+	<ctime>
+	<windows.h>
+	<glut.h>
+	<sys/time.h>
+	<GLUT/glut.h>
+	<glut.h>
+	"ImageClass.h"
+	"SOIL/SOIL.h"
+	<fstream>
+	<dirent.h>
+	<string>
+	<time.h>
+	<vector>
+	"Temporizador.h"
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/GL/glut.h
+	"freeglut.h"
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/GL/freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/GL/freeglut_std.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/GL/freeglut_ext.h
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/Temporizador.h
+	<iostream>
+	<windows.h>
+	<sys/time.h>
+
+1589513983 source:/home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/image_DXT.cpp
+	"image_DXT.h"
+	<math.h>
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/image_DXT.h
+
+1589513983 source:/home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/image_helper.cpp
+	"image_helper.h"
+	<stdlib.h>
+	<math.h>
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/image_helper.h
+
+1589513983 source:/home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/SOIL.cpp
+	<windows.h>
+	<wingdi.h>
+	<GL/gl.h>
+	<OpenGL/gl.h>
+	<Carbon/Carbon.h>
+	<GL/gl.h>
+	<GL/glx.h>
+	"SOIL.h"
+	"stb_image_aug.h"
+	"image_helper.h"
+	"image_DXT.h"
+	<stdlib.h>
+	<string.h>
+	<iostream>
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/stb_image_aug.h
+	<stdio.h>
+
+1589513983 source:/home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/stb_image_aug.cpp
+	"stb_image_aug.h"
+	<math.h>
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<memory.h>
+	<assert.h>
+	<stdarg.h>
+	"stbi_DDS_aug.h"
+	"stbi_DDS_aug_c.h"
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/stbi_DDS_aug.h
+
+1589513983 /home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/SOIL/stbi_DDS_aug_c.h
+
+1589513983 source:/home/nikolas/Desktop/last1/CG-SpaceInvaders-2020-1/Temporizador.cpp
+	"Temporizador.h"
+
